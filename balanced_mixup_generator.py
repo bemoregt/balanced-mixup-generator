@@ -1,5 +1,5 @@
 import numpy as np
-from mixup_generator import MixupGenerator
+from .mixup_generator import MixupGenerator
 
 def _flatten_y_if_onehot(y):
     """De-one-hot y, i.e. [0,1,0,0,...] to 1 for all y."""
