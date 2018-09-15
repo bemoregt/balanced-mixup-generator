@@ -13,7 +13,7 @@ class MixupGenerator():
 
     def __call__(self):
         while True:
-            indexes = self.__get_exploration_order()
+            indexes = self.get_exploration_order()
             itr_num = int(len(indexes) // (self.batch_size * 2))
 
             for i in range(itr_num):
@@ -22,7 +22,7 @@ class MixupGenerator():
 
                 yield X, y
 
-    def __get_exploration_order(self):
+    def get_exploration_order(self):
         indexes = np.arange(self.sample_num)
 
         if self.shuffle:
