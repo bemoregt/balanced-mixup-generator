@@ -38,7 +38,7 @@ class BalancedMixupGenerator(MixupGenerator):
                               for cur_cls in self.classes}
         self.verbose = verbose
 
-        assert batch_size > len(self.classes), \
+        assert batch_size >= len(self.classes), \
             'Use normal MixupGenerator if you wish small batch size than # of classes.' \
             + 'batch_size={} num_classes={}'.format(batch_size, len(self.classes))
         assert self.shuffle, 'Unfortunately non-shuffle is not supported...'
