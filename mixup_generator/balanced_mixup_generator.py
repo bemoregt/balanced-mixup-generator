@@ -5,7 +5,7 @@ def _flatten_y_if_onehot(y):
     """De-one-hot y, i.e. [0,1,0,0,...] to 1 for all y."""
     return y if len(np.array(y).shape) == 1 else [np.argmax(one) for one in y]
 
-def randam_shuffled(np_array):
+def _randam_shuffled(np_array):
     np.random.shuffle(np_array)
     return np_array
 
@@ -34,7 +34,7 @@ class BalancedMixupGenerator(MixupGenerator):
 
         self.class_train = np.array(_flatten_y_if_onehot(y_train))
         self.classes = sorted(list(set(self.class_train)))
-        self.class_rnd_idx = {cur_cls: randam_shuffled(np.where(self.class_train == cur_cls)[0])
+        self.class_rnd_idx = {cur_cls: _randam_shuffled(np.where(self.class_train == cur_cls)[0])
                               for cur_cls in self.classes}
         self.verbose = verbose
 

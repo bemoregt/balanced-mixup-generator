@@ -16,6 +16,12 @@ This class generates class balanced batches that are mixup applied.
 
 - Batch size has to be greater than or equal to number of classes.
 
+## Install
+
+```sh
+python setup.py install
+```
+
 ## References
 [1] H. Zhang, M. Cisse, Y. N. Dauphin, and D. Lopez-Paz, "mixup: Beyond Empirical Risk Minimization," in arXiv:1710.09412, 2017.
 
