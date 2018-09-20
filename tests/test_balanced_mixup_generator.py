@@ -18,8 +18,8 @@ class TestCore(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def check_only_two_non_zeros(self, one_y):
-        self.assertEqual(2, np.sum(one_y != 0.0))
+    def check_only_n_non_zeros(self, one_y, only_n=2):
+        self.assertEqual(only_n, np.sum(one_y != 0.0))
 
     def test_naive_sample(self):
         X = [
@@ -49,7 +49,30 @@ class TestCore(unittest.TestCase):
         self.assertEqual(dX.shape, (12, 1, 1, 3))
         self.assertEqual(dy.shape, (12, 3))
         for one_y in dy:
-            self.check_only_two_non_zeros(one_y)
+            self.check_only_n_non_zeros(one_y)
+
+    def test_non_image(self):
+        N = 200
+        X = np.random.beta(1, 1, (N, 10))
+        y = keras.utils.to_categorical(np.random.randint(0, 5, (N, 1)))
+        bmgen = BalancedMixupGenerator(X, y, batch_size=11)()
+        dX, dy = next(bmgen)
+        self.assertEqual(dX.shape, (11, 10))
+        self.assertEqual(dy.shape, (11, 5))
+        for one_y in dy:
+            self.check_only_n_non_zeros(one_y)
+
+    def test_mix_0(self):
+        N = 200
+        X = np.random.beta(1, 1, (N, 10, 2, 5, 3, 8))
+        y = keras.utils.to_categorical(np.random.randint(0, 9, (N, 1)))
+        bmgen = BalancedMixupGenerator(X, y, batch_size=11, alpha=0.0)()
+        dX, dy = next(bmgen)
+        self.assertEqual(dX.shape, (11, 10, 2, 5, 3, 8))
+        self.assertEqual(dy.shape, (11, 9))
+        for one_y in dy:
+            self.check_only_n_non_zeros(one_y, only_n=1)
+
 
 if __name__ == '__main__':
     unittest.main()

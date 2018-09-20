@@ -31,14 +31,15 @@ class MixupGenerator():
         return indexes
 
     def __data_generation(self, batch_ids):
-        _, h, w, c = self.X_train.shape
-        l = np.random.beta(self.alpha, self.alpha, self.batch_size)
-        X_l = l.reshape(self.batch_size, 1, 1, 1)
-        y_l = l.reshape(self.batch_size, 1)
+        l = np.random.beta(self.alpha, self.alpha) if self.alpha > 0.0 else 0.0
+        X_l1 = l * np.ones([self.batch_size]+list(self.X_train.shape[1:]))
+        y_l1 = l * np.ones([self.batch_size]+list(self.y_train.shape[1:]))
+        X_l2 = 1 - X_l1
+        y_l2 = 1 - y_l1
 
         X1 = self.X_train[batch_ids[:self.batch_size]]
         X2 = self.X_train[batch_ids[self.batch_size:]]
-        X = X1 * X_l + X2 * (1 - X_l)
+        X = X1 * X_l1 + X2 * X_l2
 
         if self.datagen:
             for i in range(self.batch_size):
@@ -51,10 +52,10 @@ class MixupGenerator():
             for y_train_ in self.y_train:
                 y1 = y_train_[batch_ids[:self.batch_size]]
                 y2 = y_train_[batch_ids[self.batch_size:]]
-                y.append(y1 * y_l + y2 * (1 - y_l))
+                y.append(y1 * y_l1 + y2 * 1 - y_l2)
         else:
             y1 = self.y_train[batch_ids[:self.batch_size]]
             y2 = self.y_train[batch_ids[self.batch_size:]]
-            y = y1 * y_l + y2 * (1 - y_l)
+            y = y1 * y_l1 + y2 * y_l2
 
         return X, y
